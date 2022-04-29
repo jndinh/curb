@@ -13,7 +13,9 @@ module Curl
     puts "2. thread - #{Thread.current[:curb_curl]}"
     puts "2. url A - #{url}"
     handle = Thread.current[:curb_curl] ||= Curl::Easy.new
+    puts "2. HANDLE A - #{handle.inspect}"
     handle.reset
+    puts "2. HANDLE B - #{handle.inspect}"
     puts "2. handle url A - #{handle.url}"
     puts "2. url B - #{url}"
     handle.url = url
