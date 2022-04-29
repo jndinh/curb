@@ -10,19 +10,21 @@ module Curl
 
   def self.http(verb, url, post_body=nil, put_data=nil, &block)
     puts "START HTTP - #{verb} * #{url}"
-    puts "2. thread - #{Thread.current[:curb_curl]}"
-    handle = Thread.current[:curb_curl] ||= Curl::Easy.new
-    puts "2. HANDLE A - #{handle.inspect}"
-    handle.reset
-    puts "2. HANDLE B - #{handle.inspect}"
-    puts "2. handle url A - #{handle.url}"
-    puts "2. url B - #{url}"
+    if Thread.current[:curb_curl_yielding]
+      handle = Curl::Easy.new # we can't reuse this
+    else
+      handle = Thread.current[:curb_curl] ||= Curl::Easy.new
+      handle.reset
+    end
     handle.url = url
     handle.post_body = post_body if post_body
     handle.put_data = put_data if put_data
-    yield handle if block_given?
-    puts "2. handle url B - #{handle.url}"
-    handle.http(verb)
+    if block_given?
+      Thread.current[:curb_curl_yielding] = true
+      yield handle
+      Thread.current[:curb_curl_yielding] = false
+    end
+    handle.http(verb)]
     puts "ENDING HTTP - #{verb} * #{url}"
     handle
   end
