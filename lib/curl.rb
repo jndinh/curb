@@ -33,6 +33,7 @@ module Curl
 
   def self.post(url, params={}, &block)
     puts "1. post: #{url} #{params}"
+    puts Curl.method(:http).source.display
     http :POST, url, postalize(params), nil, &block
   end
 
