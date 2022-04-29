@@ -9,12 +9,15 @@ require 'cgi'
 module Curl
 
   def self.http(verb, url, post_body=nil, put_data=nil, &block)
+    puts "2. thread - #{Thread.current[:curb_curl]}"
+    puts "2. url - #{url}"
     handle = Thread.current[:curb_curl] ||= Curl::Easy.new
     handle.reset
     handle.url = url
     handle.post_body = post_body if post_body
     handle.put_data = put_data if put_data
     yield handle if block_given?
+    puts "2. handle url - #{handle.url}"
     handle.http(verb)
     handle
   end
@@ -24,6 +27,7 @@ module Curl
   end
 
   def self.post(url, params={}, &block)
+    puts "1. post: #{url} #{params}"
     http :POST, url, postalize(params), nil, &block
   end
 

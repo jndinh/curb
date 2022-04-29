@@ -83,6 +83,9 @@ module Curl
       # blk: a callback, that yeilds when a handle is completed
       #
       def http(urls_with_config, multi_options={}, &blk)
+        puts "3 ----"
+        puts urls_with_config.inspect
+
         m = Curl::Multi.new
 
         # maintain a sane number of easy handles
